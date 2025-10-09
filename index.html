@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎓 Project Group Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 40px;
+      color: white;
+      font-size: 2rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      width: 95%;
+      max-width: 950px;
+      padding: 30px;
+      margin: 20px auto;
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .input-group input[type="text"] {
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 15px;
+      font-size: 15px;
+      width: 250px;
+      transition: 0.3s;
+    }
+
+    .input-group input[type="text"]:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    /* Custom file input styling */
+    .file-input {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    .file-input input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+    }
+
+    .file-label {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .file-label:hover {
+      background: #5a6ee0;
+    }
+
+    #fileName {
+      font-size: 14px;
+      color: #444;
+      margin-left: 10px;
+    }
+
+    button {
+      background: #764ba2;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #5d3d87;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 25px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #eee;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #667eea;
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f7f7f7;
+    }
+
+    .footer {
+      margin: 30px;
+      color: white;
+      font-size: 13px;
+      opacity: 0.9;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      input, button {
+        width: 90%;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎓 Random Project Group Generator</h1>
+
+  <div class="container">
+    <div class="input-group">
+      <input type="text" id="batchName" placeholder="Enter Batch Name (e.g. CSE-BATCH-2025)" />
+
+      <div class="file-input">
+        <label for="fileInput" class="file-label">📁 Choose Excel File</label>
+        <input type="file" id="fileInput" accept=".xlsx, .xls" />
+      </div>
+      <span id="fileName">No file chosen</span>
+
+      <button onclick="processFile()">🚀 Generate Teams</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="footer">
+    © 2025 Project Group Generator | Designed by Ambica Kiranmayee Bellamkonda 💙
+  </div>
+
+  <script>
+    const projectTitles = [
+      "E-Commerce Website", "Online Learning Platform",
+      "Hospital Management System", "Library Management System", "Attendance Tracker", "Movie Ticket Booking App",
+      "Online Voting System", "Expense Tracker", "Food Delivery App",
+      "Inventory Management", "Student Feedback Portal",
+      "Tourism Guide App", "Fitness Tracker", "Online Banking Simulation", "Music Player Web App", "Travel Booking Site",
+      "Smart Parking System", "Online Event Planner", "Budget Planner App", "E-Library System", "Complaint Management System","Quizz App","Blogging Platform UI","Community Forms UI","Beauty Products Shopping UI","News Aggregator UI","Stocks Trading App","Social Media Dashboard","Fashion Shopping App UI","Learning App UI","Grocery Delivery App UI","Donation App(Choose&Pay)","Hotel/house booking Website","Reseller Platforms","Ride Hailing App",""
+    ];
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const fileName = e.target.files.length ? e.target.files[0].name : 'No file chosen';
+      document.getElementById('fileName').textContent = fileName;
+    });
+
+    async function processFile() {
+      const fileInput = document.getElementById('fileInput');
+      const batchInput = document.getElementById('batchName');
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = "";
+
+      const batchName = batchInput.value.trim();
+      if (!batchName) {
+        alert("⚠️ Please enter your batch name!");
+        return;
+      }
+
+      if (!fileInput.files.length) {
+        alert("⚠️ Please upload an Excel file!");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      const names = jsonData.map(row => Object.values(row)[0]).filter(n => n);
+      if (names.length === 0) {
+        resultDiv.innerHTML = "<p style='color:red;'>No names found in Excel!</p>";
+        return;
+      }
+
+      // Shuffle and form groups
+      const shuffled = [...names].sort(() => Math.random() - 0.5);
+      const groups = [];
+      for (let i = 0; i < shuffled.length; i += 2) {
+        groups.push(shuffled.slice(i, i + 2));
+      }
+
+      // Merge single leftover member
+      if (groups[groups.length - 1].length === 1) {
+        const lastMember = groups.pop()[0];
+        const randomTeam = Math.floor(Math.random() * groups.length);
+        groups[randomTeam].push(lastMember);
+      }
+
+      // Assign projects
+      const assignedData = groups.map((team, i) => ({
+        "S.No": i + 1,
+        "Team No": "Team " + (i + 1),
+        "Project Name": projectTitles[i % projectTitles.length],
+        "Team Members": team.join(", ")
+      }));
+
+      // Display Table
+      let html = `
+        <h3 style="color:#667eea;">Batch: ${batchName}</h3>
+        <table>
+          <tr>
+            <th>S.No</th>
+            <th>Team No</th>
+            <th>Project Name</th>
+            <th>Team Members</th>
+          </tr>
+      `;
+      assignedData.forEach(row => {
+        html += `
+          <tr>
+            <td>${row["S.No"]}</td>
+            <td>${row["Team No"]}</td>
+            <td>${row["Project Name"]}</td>
+            <td>${row["Team Members"]}</td>
+          </tr>
+        `;
+      });
+      html += `</table>
+        <button onclick="downloadExcel('${batchName}')">📥 Download Excel</button>`;
+      resultDiv.innerHTML = html;
+
+      // Store for export
+      window.finalData = assignedData;
+      window.batchName = batchName;
+    }
+
+    function downloadExcel(batchName) {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(window.finalData);
+      XLSX.utils.book_append_sheet(wb, ws, "Teams");
+      const safeBatch = batchName.replace(/[^a-zA-Z0-9_-]/g, "_");
+      XLSX.writeFile(wb, `Team_Project_Assignments_${safeBatch}.xlsx`);
+    }
+  </script>
+</body>
+</html>
