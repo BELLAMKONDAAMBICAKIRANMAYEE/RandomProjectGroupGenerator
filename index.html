@@ -192,12 +192,12 @@
 
   <script>
     const projectTitles = [
-   "Online Learning Platform",
-      "Hospital Management System", "Library Management System", "Attendance Tracker", "Movie Ticket Booking App",
+   "Online Learning Platform","Ecommerce"
+      , "Attendance Tracker", "Movie Ticket Booking App",
       "Online Voting System", "Expense Tracker", "Food Delivery App",
       "Inventory Management", "Student Feedback Portal",
       "Tourism Guide App", "Fitness Tracker", "Online Banking Simulation", "Music Player Web App", "Travel Booking Site",
-      "Smart Parking System", "Online Event Planner", "Budget Planner App", "E-Library System", "Complaint Management System"
+      "Smart Parking System", "Online Event Planner", "Budget Planner App","Hospital Management System", "Library Management System" "Complaint Management System"
     ];
 
     document.getElementById('fileInput').addEventListener('change', (e) => {
@@ -237,8 +237,8 @@
       // Shuffle and form groups
       const shuffled = [...names].sort(() => Math.random() - 0.5);
       const groups = [];
-      for (let i = 0; i < shuffled.length; i += 3) {
-        groups.push(shuffled.slice(i, i + 3));
+      for (let i = 0; i < shuffled.length; i += 2) {
+        groups.push(shuffled.slice(i, i + 2));
       }
 
       // Merge single leftover member
